@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Support\Facades\Hash;  
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -25,16 +26,22 @@ class UserController extends Controller
         return $files;
     }
 
-    public function register(Request $request){
-        $user = new User();
+    public function register(Request $request)
+    {
+        $request->validate([
+            'picture' => 'nullable|file|max:' . Config::get('filesystems.max_upload_size'),
+            'diplomas' => 'nullable|array',
+            'diplomas.*' => 'file|max:' . Config::get('filesystems.max_upload_size'),
+            // Add other validation rules for your fields
+        ]);
 
+        $user = new User();
         $user->gender = $request->gender;
         $user->city = $request->city;
         $user->pro_email = $request->pro_email;
         $user->family_situation = $request->family_situation;
         $user->contry = $request->contry;
         $user->nationality = $request->nationality;
-
 
         $user->first_name = $request->first_name;
         $user->last_name = $request->last_name;
@@ -45,17 +52,23 @@ class UserController extends Controller
         $user->hiring_date = $request->hiring_date;
         $user->password = Hash::make(Str::random(12));
         $user->user_folder = $user->first_name . $user->last_name;
+
         $work_file = new stdClass();
-        if ($request->hasFile('picture'))
-            $work_file->picture  = $this->save_file($user->user_folder, $request->picture);
-        if ($request->hasFile('diplomas')) 
-            $work_file->diplomas =  $this->save_files($request->diplomas, $user->user_folder);
+
+        if ($request->hasFile('picture')) {
+            $work_file->picture = $this->save_file($user->user_folder, $request->picture);
+        }
+
+        if ($request->hasFile('diplomas')) {
+            $work_file->diplomas = $this->save_files($request->diplomas, $user->user_folder);
+        }
+
         $user->work_files = $work_file;
         $user->save();
 
         return response()->json([
-            'message'=>'User ajoute avec succes',
-            'user'=>$user,
+            'message' => 'User ajoute avec succes',
+            'user' => $user,
         ]);
     }
 }

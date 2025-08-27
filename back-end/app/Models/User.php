@@ -10,65 +10,46 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-
-  
     use HasApiTokens, HasFactory, Notifiable;
- 
 
+    // Relations
     public function banks()
     {
         return $this->hasMany(Bank::class);
     }
 
-    public function experiences(){
+    public function experiences()
+    {
         return $this->hasMany(Experience::class);
     }
-    
-   
+
     public function salaries()
     {
         return $this->hasMany(Salary::class);
     }
-    
 
+    // Vérification admin
+    public function isAdmin()
+    {
+        return $this->role === false; // Adjust the logic as needed
+    }
 
-
-
-
-
+    // Attributs remplissables
     protected $fillable = [
         'name',
         'email',
         'password',
     ];
 
-
-
-
-
-
-    
-
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
+    // Attributs cachés pour la sérialisation
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
+    // Attributs avec casts
     protected $casts = [
         'email_verified_at' => 'datetime',
         'work_files' => 'array', // Automatically converts the JSON back into an array
     ];
-
-  
-    
 }

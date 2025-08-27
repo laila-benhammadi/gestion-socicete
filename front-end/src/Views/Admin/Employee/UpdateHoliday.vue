@@ -1,9 +1,17 @@
 <template>
   <div class="container mt-5">
-    <h2 class="mb-4 text-center">Modifier le congé</h2>
 
+    <!-- Titre de la page -->
+    <h2 class="mb-4 text-center flex items-center justify-center gap-2 text-black text-2xl font-bold">
+      <i class="bi bi-pencil-square text-black-600"></i>
+      Modifier le congé
+    </h2>
+
+    <!-- Formulaire de modification -->
     <form @submit.prevent="updateHoliday">
       <div class="row">
+
+        <!-- Colonne gauche -->
         <div class="col-md-6">
           <div class="mb-3">
             <label for="type_vacancy" class="form-label">Type de congé :</label>
@@ -39,6 +47,7 @@
           </div>
         </div>
 
+        <!-- Colonne droite -->
         <div class="col-md-6">
           <div class="mb-3">
             <label for="start_date" class="form-label">Date de début :</label>
@@ -71,17 +80,22 @@
             ></textarea>
           </div>
         </div>
+
       </div>
 
+      <!-- Bouton Mettre à jour -->
       <div class="text-center mt-4">
         <button type="submit" class="btn btn-success px-4">Mettre à jour</button>
       </div>
     </form>
 
+    <!-- Messages d'erreur et de succès -->
     <div v-if="errorUpdate" class="alert alert-danger mt-3">{{ errorUpdate }}</div>
     <div v-if="messageSuccess" class="alert alert-success mt-3">{{ messageSuccess }}</div>
+
   </div>
 </template>
+
 <script>
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -96,16 +110,20 @@ export default {
     const start_date = ref('');
     const end_date = ref('');
     const certificate = ref(null);
+
     const errorUpdate = ref(null);
     const messageSuccess = ref(null);
+
     const route = useRoute();
     const router = useRouter();
     const holidayId = route.params.holidayId;
 
+    // Gestion du fichier
     const handleFileChange = (event) => {
       certificate.value = event.target.files[0];
     };
 
+    // Récupération des données du congé
     const getHoliday = async () => {
       try {
         const response = await axios.get(`http://127.0.0.1:8000/api/getHoliday/${holidayId}`);
@@ -116,12 +134,14 @@ export default {
         end_date.value = holiday.end_date || '';
         description.value = holiday.description || '';
         number_days.value = holiday.number_days || '';
-      } catch (error) {
+      } catch {
         errorUpdate.value = 'Erreur lors du chargement des données du congé.';
       }
     };
 
+    // Mise à jour du congé
     const updateHoliday = async () => {
+      // Validation des champs
       if (!type_vacancy.value || !start_date.value) {
         errorUpdate.value = 'Les champs Type de congé et Date de début sont obligatoires.';
         return;
@@ -153,13 +173,12 @@ export default {
         messageSuccess.value = 'Congé mis à jour avec succès.';
         errorUpdate.value = null;
 
-        const employeeId = route.params.employeeId;
+        const employeeId = route.params.id;
         router.push(`/employee/${employeeId}/nav/holiday`);
 
         setTimeout(() => (messageSuccess.value = null), 3000);
       } catch (error) {
-        const errorMessage = error.response?.data?.message || 'Une erreur est survenue lors de la mise à jour.';
-        errorUpdate.value = errorMessage;
+        errorUpdate.value = error.response?.data?.message || 'Une erreur est survenue lors de la mise à jour.';
       }
     };
 
@@ -182,3 +201,7 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+/* Ajouter des styles personnalisés si nécessaire */
+</style>

@@ -7,7 +7,8 @@ import router from './routes/index'; // Assurez-vous que le chemin est correct
 import 'font-awesome/css/font-awesome.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-
+import './assets/App.css' ;// 👈 Import du CSS global
+ 
 // Create the Vue app
 const app = createApp(App);
 

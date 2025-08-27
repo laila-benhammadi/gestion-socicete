@@ -1,0 +1,33 @@
+/* Styles par défaut */
+body {
+  background-color: white;
+  color: black;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.card {
+  background-color: white;
+  color: black;
+}
+
+/* Dark mode */
+body.dark-mode {
+  background-color: #121212;
+  color: white;
+}
+
+body.dark-mode .card {
+  background-color: #1e1e1e;
+  color: white;
+}
+
+body.dark-mode a {
+  color: #9ecbff;
+}
+
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4 {
+  color: white;
+}

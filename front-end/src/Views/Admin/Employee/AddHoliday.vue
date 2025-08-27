@@ -1,9 +1,16 @@
 <template>
   <div class="container mt-5">
-    <h2 class="mb-4 text-center">Formulaire de congé</h2>
 
-    <form @submit.prevent="addHoliday"> 
+    <!-- Titre de la page -->
+    <h2 class="mb-4 text-center text-dark">
+      <i class="bi bi-calendar-plus"></i> Ajouter un congé
+    </h2>
+
+    <!-- Formulaire d'ajout de congé -->
+    <form @submit.prevent="addHoliday">
       <div class="row">
+
+        <!-- Colonne gauche -->
         <div class="col-md-6">
           <div class="mb-3">
             <label for="type_vacancy" class="form-label">Type de congé :</label>
@@ -17,7 +24,7 @@
 
           <div class="mb-3">
             <label for="number_days" class="form-label">Nombre du jour :</label>
-            <input type="number" id="number_days" class="form-control" v-model="number_days" required/>
+            <input type="number" id="number_days" class="form-control" v-model="number_days" required />
           </div>
 
           <div class="mb-3">
@@ -26,9 +33,8 @@
           </div>
         </div>
 
+        <!-- Colonne droite -->
         <div class="col-md-6">
-         
-
           <div class="mb-3">
             <label for="start_date" class="form-label">Date de début :</label>
             <input type="date" id="start_date" class="form-control" v-model="start_date" required />
@@ -40,19 +46,22 @@
           </div>
 
           <div class="mb-3">
-            <label for="discription" class="form-label">Description :</label>
+            <label for="description" class="form-label">Description :</label>
             <textarea id="description" class="form-control" v-model="description" required></textarea>
           </div>
         </div>
+
       </div>
 
+      <!-- Bouton Ajouter -->
       <div class="text-center mt-4">
         <button type="submit" class="btn btn-success px-4">Ajouter</button>
       </div>
     </form>
 
+    <!-- Message d'erreur -->
+    <div v-if="errorAdd" class="alert alert-danger mt-3">{{ errorAdd }}</div>
 
-     <div v-if="errorAdd" class="alert alert-danger mt-3">{{ errorAdd }}</div>
   </div>
 </template>
 
@@ -66,12 +75,13 @@ export default {
   setup() {
     const type_vacancy = ref("");
     const start_date = ref("");
-     const description = ref("");
-    const number_days = ref("");
     const end_date = ref("");
+    const description = ref("");
+    const number_days = ref("");
     const certificate = ref(null);
     const errorAdd = ref(null);
     const messageSuccess = ref(null);
+
     const route = useRoute();
     const router = useRouter();
 
@@ -82,6 +92,7 @@ export default {
     const addHoliday = async () => {
       const experienceId = route.params.id;
 
+      // Validation des champs obligatoires
       if (!type_vacancy.value || !start_date.value || !description.value || !number_days.value) {
         errorAdd.value = 'Veuillez remplir tous les champs.';
         return;
@@ -94,38 +105,22 @@ export default {
       formData.append('number_days', number_days.value);
       formData.append('start_date', start_date.value);
 
-      if (end_date.value) {
-        formData.append('end_date', end_date.value);
-      }
-
-      if (certificate.value) {
-        formData.append('certificate', certificate.value);
-      }
-      
-      console.log(formData);
-      
-
+      if (end_date.value) formData.append('end_date', end_date.value);
+      if (certificate.value) formData.append('certificate', certificate.value);
 
       try {
         const response = await axios.post(
           `http://127.0.0.1:8000/api/addHoliday/${experienceId}`,
           formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          }
+          { headers: { 'Content-Type': 'multipart/form-data' } }
         );
 
-        console.log('Réponse:', response);
-      
         messageSuccess.value = 'Congé ajouté avec succès.';
         router.push({
           path: `/employee/${experienceId}/nav/holiday`,
           query: { success: 'Expérience ajoutée avec succès' },
         });
       } catch (err) {
-        alert(err)
         console.error("Erreur lors de l'ajout de l'expérience:", err);
         errorAdd.value = "Erreur lors de l'ajout de l'expérience. Veuillez réessayer.";
       }
@@ -136,7 +131,7 @@ export default {
       start_date,
       end_date,
       description,
-      number_days, 
+      number_days,
       certificate,
       errorAdd,
       messageSuccess,
@@ -148,4 +143,5 @@ export default {
 </script>
 
 <style scoped>
+/* Styles personnalisés si nécessaire */
 </style>
